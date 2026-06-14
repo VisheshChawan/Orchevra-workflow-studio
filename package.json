@@ -1,7 +1,8 @@
 {
-  "name": "vectorshift-workflow-architect",
+  "name": "orchevra-ai-workflow-studio",
+  "description": "ORCHEVRA — AI Workflow Studio for building, orchestrating, and automating intelligent workflows.",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",

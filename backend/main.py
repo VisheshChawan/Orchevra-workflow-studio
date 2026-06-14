@@ -4,8 +4,8 @@ from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional
 
 app = FastAPI(
-    title="VectorShift Flow Backend",
-    description="Production-grade FastAPI pipeline graph parsing engine for VectorShift",
+    title="ORCHEVRA Backend",
+    description="Production-grade FastAPI pipeline graph parsing engine for ORCHEVRA AI Workflow Studio",
     version="1.0.0"
 )
 
@@ -42,51 +42,48 @@ class PipelineResponse(BaseModel):
 
 def is_directed_acyclic_graph(nodes: List[NodeModel], edges: List[EdgeModel]) -> bool:
     """
-    Run cycle detection using a standard Depth First Search (DFS) 
-    with 3-state node coloring:
-    - 0: Unvisited (White)
-    - 1: Visiting (Gray) - inside current recursion stack
-    - 2: Visited (Black) - fully explored
+    Validate that the pipeline graph is a Directed Acyclic Graph (DAG) using
+    Kahn's Algorithm for topological sorting.
     """
-    # Build Adjacency List representing the directional edges
-    adj: Dict[str, List[str]] = {node.id: [] for node in nodes}
+    from collections import deque
+    
+    node_ids = {node.id for node in nodes}
     for edge in edges:
-        if edge.source in adj:
-            adj[edge.source].append(edge.target)
-        else:
-            # Handle edge connecting to/from undeclared nodes gracefully
-            adj[edge.source] = [edge.target]
+        node_ids.add(edge.source)
+        node_ids.add(edge.target)
 
-    state: Dict[str, int] = {node.id: 0 for node in nodes}
+    if not node_ids:
+        return True
 
-    def has_cycle(node_id: str) -> bool:
-        state[node_id] = 1  # State = VISITING
+    # Build adjacency list and map in-degrees
+    adj: Dict[str, List[str]] = {node_id: [] for node_id in node_ids}
+    in_degree: Dict[str, int] = {node_id: 0 for node_id in node_ids}
+
+    for edge in edges:
+        adj[edge.source].append(edge.target)
+        in_degree[edge.target] += 1
+
+    # Queue of nodes with in-degree 0
+    queue = deque([node_id for node_id in node_ids if in_degree[node_id] == 0])
+    
+    visited_count = 0
+    while queue:
+        node = queue.popleft()
+        visited_count += 1
         
-        neighbors = adj.get(node_id, [])
-        for neighbor in neighbors:
-            neighbor_state = state.get(neighbor, 0)
-            if neighbor_state == 1:
-                return True  # Found active back-edge! Circle exists.
-            elif neighbor_state == 0:
-                if has_cycle(neighbor):
-                    return True
-                    
-        state[node_id] = 2  # State = VISITED
-        return False
+        for neighbor in adj[node]:
+            in_degree[neighbor] -= 1
+            if in_degree[neighbor] == 0:
+                queue.append(neighbor)
 
-    # Perform detection across all root nodes to cover disjointed subgraphs
-    for node in nodes:
-        if state.get(node.id, 0) == 0:
-            if has_cycle(node.id):
-                return False  # Not a DAG
-
-    return True  # Is a DAG
+    # If the number of visited nodes equals the number of unique nodes, there are no cycles.
+    return visited_count == len(node_ids)
 
 @app.get("/")
 def read_root():
     return {
         "status": "healthy",
-        "service": "VectorShift Pipeline Orchestrator API",
+        "service": "ORCHEVRA Pipeline Orchestrator API",
         "version": "1.0.0"
     }
 

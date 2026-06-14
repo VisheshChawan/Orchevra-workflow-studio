@@ -79,6 +79,59 @@ async function startServer() {
   // Middleware to support JSON parsing
   app.use(express.json());
 
+  // Resolve and install Python dependencies if missing
+  const installDepsAndStart = () => {
+    console.log('[Theme Engine] Restoring Python FastAPI microservices requirements...');
+    
+    // Try pip3 install first
+    const pip = spawn('pip3', ['install', '-r', 'backend/requirements.txt'], {
+      stdio: 'inherit'
+    });
+
+    pip.on('close', (code) => {
+      if (code === 0) {
+        console.log('[Theme Engine] Python dependencies installed successfully.');
+        spawnPythonBackend();
+      } else {
+        console.warn('[Theme Engine] pip3 failed or returned non-zero code. Trying fallback pip...');
+        const backupPip = spawn('pip', ['install', '-r', 'backend/requirements.txt'], {
+          stdio: 'inherit'
+        });
+        backupPip.on('close', (fallbackCode) => {
+          if (fallbackCode === 0) {
+            console.log('[Theme Engine] Python dependencies installed successfully using backup pip.');
+          } else {
+            console.error('[Theme Engine] Both pip3 and pip failed to install requirements. App backend might throw errors.');
+          }
+          spawnPythonBackend();
+        });
+        backupPip.on('error', (err) => {
+          console.error('[Theme Engine] Backup pip command not found, proceeding directly:', err.message);
+          spawnPythonBackend();
+        });
+      }
+    });
+
+    pip.on('error', (err) => {
+      console.warn('[Theme Engine] pip3 command not found. Trying fallback pip...', err.message);
+      const backupPip = spawn('pip', ['install', '-r', 'backend/requirements.txt'], {
+        stdio: 'inherit'
+      });
+      backupPip.on('close', (fallbackCode) => {
+        if (fallbackCode === 0) {
+          console.log('[Theme Engine] Python dependencies installed successfully using backup pip.');
+        } else {
+          console.error('[Theme Engine] Backup pip failed to install requirements.');
+        }
+        spawnPythonBackend();
+      });
+      backupPip.on('error', (fallbackErr) => {
+        console.error('[Theme Engine] No usable pip install module detected, proceeding directly:', fallbackErr.message);
+        spawnPythonBackend();
+      });
+    });
+  };
+
   // Spawn Python FastAPI backend process
   const spawnPythonBackend = () => {
     console.log('[Theme Engine] Spawning Python FastAPI backend on port 18080...');
@@ -101,7 +154,7 @@ async function startServer() {
     });
   };
 
-  spawnPythonBackend();
+  installDepsAndStart();
 
   // POST endpoint to evaluate graph structure
   app.post('/api/pipelines/parse', async (req, res) => {

@@ -24,6 +24,7 @@ import { useThemeStore } from './store/useThemeStore';
 import { pipelineSchema } from './schemas/pipelineSchema';
 import { Workflow, AlertCircle, Info, Sparkles, Search } from 'lucide-react';
 import { FirebaseProvider } from './components/FirebaseContext';
+import { fetchWithRetry } from './lib/api';
 
 // Cycle detection utility via BFS/DFS checking if target can reach source (DAG safety validation)
 const createsCycle = (sourceId: string, targetId: string, currentEdges: Edge[]): boolean => {
@@ -327,7 +328,7 @@ const WorkflowEditorContent: React.FC = () => {
     setResults(null);
 
     try {
-      const response = await fetch('/api/pipelines/parse', {
+      const response = await fetchWithRetry('/api/pipelines/parse', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -452,9 +453,9 @@ const WorkflowEditorContent: React.FC = () => {
 
     } catch (err: any) {
       console.error('Topology validation service is down:', err);
-      setError(err?.message || 'Unable to connect to the backend validation server.');
+      setError(err?.message || 'Backend unavailable. Please try again.');
       setModalOpen(true); // Pop open to show fallback errors
-      addToast('Service Error: Topologic parse failed.', 'error');
+      addToast('Backend unavailable. Please try again.', 'error');
     } finally {
       setLoading(false);
     }

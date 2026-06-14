@@ -74,7 +74,8 @@ function checkIsDAG(nodes: FlowNode[], edges: FlowEdge[]): boolean {
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT || 3000);
+  const fastApiUrl = process.env.FASTAPI_URL?.replace(/\/+$/, '');
 
   // Middleware to support JSON parsing
   app.use(express.json());
@@ -170,9 +171,12 @@ async function startServer() {
         return;
       }
 
-      // Route the parse request through Python FastAPI backend at port 18080
+      // Route the parse request through Python FastAPI backend URL
       try {
-        const response = await fetch('http://127.0.0.1:18080/api/pipelines/parse', {
+        if (!fastApiUrl) {
+          throw new Error('FASTAPI_URL is not configured');
+        }
+        const response = await fetch(`${fastApiUrl}/api/pipelines/parse`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

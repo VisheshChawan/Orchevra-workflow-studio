@@ -33,5 +33,7 @@ export async function fetchWithRetry(
     }
   }
 
-  throw new Error('Backend unavailable. Please try again.');
+  const cause = lastError instanceof Error && lastError.message ? ` (${lastError.message})` : '';
+  const message = `Backend unavailable. Please try again.${cause}`;
+  throw new Error(message);
 }

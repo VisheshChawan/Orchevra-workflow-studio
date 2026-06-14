@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -13,6 +14,7 @@ app = FastAPI(
     description="Production-grade FastAPI pipeline graph parsing engine for ORCHEVRA AI Workflow Studio",
     version="1.0.0"
 )
+logger = logging.getLogger(__name__)
 
 def get_allowed_origins() -> List[str]:
     env_origins = os.getenv("CORS_ALLOWED_ORIGINS", "")
@@ -200,6 +202,7 @@ def generate_workflow(payload: WorkflowGenerationRequest):
     except (json.JSONDecodeError, ValueError):
         raise HTTPException(status_code=502, detail="Invalid response from Gemini API")
     except Exception:
+        logger.exception("Workflow generation failed")
         raise HTTPException(status_code=500, detail="Failed to synthesize workflow")
 
 if __name__ == "__main__":

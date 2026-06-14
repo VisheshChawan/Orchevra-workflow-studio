@@ -148,11 +148,11 @@ Blueprint file: `render.yaml`
 4. Re-run smoke checks (`/docs`, frontend load, workflow parse).
 
 ### Production audit report
-- Security Score: **9/10** (restricted CORS, secret env handling, no committed secrets)
-- Performance Score: **8/10** (manual chunk splitting, minified build, retry handling)
-- Accessibility Score: **8/10** (retained semantic structure and fallback UI)
-- Deployment Score: **9/10** (health check path, service split, documented envs)
-- Production Readiness Score: **9/10** (error boundary, retry/backoff, troubleshooting + rollback docs)
+- Security Score: **9/10** (restricted CORS list, Render secret-only env strategy, and secret scan validation before commit)
+- Performance Score: **8/10** (Vite manual chunking + minification, gzip output reviewed in build logs)
+- Accessibility Score: **8/10** (metadata retained, readable fallback/error surfaces, and no removal of existing accessible controls)
+- Deployment Score: **9/10** (backend health check `/docs`, split static/API services in `render.yaml`, explicit env wiring)
+- Production Readiness Score: **9/10** (error boundary, retry/backoff network handling, deployment checklist + rollback guidance)
 
 ---
 

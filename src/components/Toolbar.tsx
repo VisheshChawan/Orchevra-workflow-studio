@@ -28,6 +28,7 @@ import {
   Menu
 } from 'lucide-react';
 import { useWorkflowStore } from '../store/useWorkflowStore';
+import { API_BASE_URL } from '../lib/api';
 
 interface ToolbarProps {
   onSubmit: () => void;
@@ -86,6 +87,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ onSubmit }) => {
   const [autoSavePulse, setAutoSavePulse] = useState(false);
   const [copiedDoc, setCopiedDoc] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const telemetryHost = API_BASE_URL.replace(/^https?:\/\//, '');
 
   // Auto save visual feedback simulations
   useEffect(() => {
@@ -935,7 +937,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ onSubmit }) => {
             <div className="flex flex-col gap-1.5">
               <span className="text-[9px] font-bold uppercase tracking-widest text-slate-500 font-mono">Telemetry Host</span>
               <span className="text-[10px] text-slate-400 font-mono bg-slate-900 border border-slate-905 px-2.5 py-1.5 rounded-lg select-text select-all">
-                localhost:3000
+                {telemetryHost}
               </span>
             </div>
           </div>

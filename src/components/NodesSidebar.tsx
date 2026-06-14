@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { 
   Search, 
   Info, 
@@ -34,6 +34,7 @@ import { workflowTemplates } from '../templates/workflowTemplates';
 import { TemplatePreviewModal } from './TemplatePreviewModal';
 import { useThemeStore } from '../store/useThemeStore';
 import { motion, AnimatePresence } from 'motion/react';
+import { fetchWithRetry } from '../lib/api';
 
 export const NodesSidebar: React.FC = () => {
   const { 
@@ -313,7 +314,7 @@ export const NodesSidebar: React.FC = () => {
     };
   };
 
-  const stats = getGraphStats();
+  const stats = useMemo(() => getGraphStats(), [nodes, edges]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (filteredNodes.length === 0) return;
@@ -482,14 +483,14 @@ export const NodesSidebar: React.FC = () => {
     setGenerating(true);
     setGenError('');
     try {
-      const response = await fetch('/api/gemini/generate-workflow', {
+      const response = await fetchWithRetry('/api/gemini/generate-workflow', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: aiPrompt })
       });
       if (!response.ok) {
         const errData = await response.json();
-        throw new Error(errData.error || 'Failed to generate workflow.');
+        throw new Error(errData.error || errData.detail || 'Failed to generate workflow.');
       }
       const data = await response.json();
       if (!data.nodes || !Array.isArray(data.nodes)) {
@@ -556,14 +557,16 @@ export const NodesSidebar: React.FC = () => {
     return Object.entries(NODE_REGISTRY).filter(([type, config]) => getNodeCategory(type, config) === category).length;
   };
 
-  const filteredNodes = Object.entries(NODE_REGISTRY).filter(([type, config]) => {
-    const nodeCat = getNodeCategory(type, config);
-    const matchesCategory = activeCategory === 'All' || nodeCat === activeCategory;
-    const matchesSearch = config.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          config.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          nodeCat.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const filteredNodes = useMemo(() => {
+    return Object.entries(NODE_REGISTRY).filter(([type, config]) => {
+      const nodeCat = getNodeCategory(type, config);
+      const matchesCategory = activeCategory === 'All' || nodeCat === activeCategory;
+      const matchesSearch = config.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            config.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            nodeCat.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [activeCategory, searchQuery]);
 
   return (
     <>

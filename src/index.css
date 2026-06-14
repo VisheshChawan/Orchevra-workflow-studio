@@ -1,0 +1,367 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Geist", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Base Design Tokens */
+:root {
+  --bg-color: #0A0F1E;
+  --surface-color: #111827;
+  --surface-elevated: #151B2E;
+  --primary-accent: #5B5BD6;
+  --secondary-accent: #7C3AED;
+  --success-color: #10B981;
+  --warning-color: #F59E0B;
+  --error-color: #EF4444;
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --border-color: rgba(255, 255, 255, 0.06);
+
+  --font-family-sans: "Geist", "Inter", sans-serif;
+  --font-family-secondary: "Inter", sans-serif;
+  --font-family-mono: "JetBrains Mono", monospace;
+
+  --node-radius: 8px;
+  --spacing-scale: 8px;
+}
+
+/* 1. DEVELOPER Theme (Linear/GitHub-style) */
+.theme-preset-developer {
+  --bg-color: #0d0f19;
+  --surface-color: #121422;
+  --surface-elevated: #1a1c2e;
+  --primary-accent: #5e6ad2;
+  --secondary-accent: #7c3aed;
+  --border-color: rgba(255, 255, 255, 0.07);
+  --node-radius: 6px;
+}
+
+/* 2. CLASSY Theme (Luxury Enterprise) */
+.theme-preset-classy {
+  --bg-color: #141413;
+  --surface-color: #1c1c1a;
+  --surface-elevated: #262623;
+  --primary-accent: #c5a880; /* Elegant bronze */
+  --secondary-accent: #a38c6d;
+  --border-color: rgba(197, 168, 128, 0.15);
+  --node-radius: 14px;
+}
+
+/* 3. ENTERPRISE Theme (Deep Navy/Indigo) */
+.theme-preset-enterprise {
+  --bg-color: #090e1a;
+  --surface-color: #101626;
+  --surface-elevated: #171e33;
+  --primary-accent: #4f46e5;
+  --secondary-accent: #6366f1;
+  --border-color: rgba(255, 255, 255, 0.05);
+  --node-radius: 10px;
+}
+
+/* 4. GITHUB Theme */
+.theme-preset-github {
+  --bg-color: #0d1117;
+  --surface-color: #161b22;
+  --surface-elevated: #21262d;
+  --primary-accent: #21262d;
+  --secondary-accent: #30363d;
+  --border-color: rgba(48, 54, 61, 0.8);
+  --text-primary: #c9d1d9;
+  --text-secondary: #8b949e;
+  --node-radius: 6px;
+}
+
+/* 5. VERCEL Theme */
+.theme-preset-vercel {
+  --bg-color: #000000;
+  --surface-color: #111111;
+  --surface-elevated: #222222;
+  --primary-accent: #000000;
+  --secondary-accent: #ffffff;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --text-primary: #ffffff;
+  --text-secondary: #888888;
+  --node-radius: 0px;
+}
+
+/* 6. MINIMAL Theme */
+.theme-preset-minimal {
+  --bg-color: #0a0a0a;
+  --surface-color: #0e0e0e;
+  --surface-elevated: #161616;
+  --primary-accent: #ffffff;
+  --secondary-accent: #555555;
+  --border-color: rgba(255, 255, 255, 0.04);
+  --node-radius: 4px;
+}
+
+/* 7. GLASS Theme */
+.theme-preset-glass {
+  --bg-color: #080c16;
+  --surface-color: rgba(17, 24, 39, 0.6);
+  --surface-elevated: rgba(31, 41, 55, 0.7);
+  --primary-accent: #8b5cf6;
+  --secondary-accent: #ec4899;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --node-radius: 16px;
+}
+
+/* 8. RETRO TERMINAL Theme */
+.theme-preset-retro {
+  --bg-color: #030702;
+  --surface-color: #071004;
+  --surface-elevated: #0f1c08;
+  --primary-accent: #10b981;
+  --secondary-accent: #34d399;
+  --border-color: #10b981;
+  --text-primary: #34d399;
+  --text-secondary: #10b981;
+  --node-radius: 0px;
+}
+
+/* Light theme overrides */
+.app-light-theme {
+  --bg-color: #f8fafc;
+  --surface-color: #ffffff;
+  --surface-elevated: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --border-color: rgba(15, 23, 42, 0.08);
+}
+
+.theme-preset-classy.app-light-theme {
+  --bg-color: #f6f5f3;
+  --surface-color: #ffffff;
+  --surface-elevated: #edebe8;
+  --primary-accent: #8c7355;
+  --text-primary: #1c1a17;
+}
+
+.theme-preset-github.app-light-theme {
+  --bg-color: #f6f8fa;
+  --surface-color: #ffffff;
+  --surface-elevated: #eaeef2;
+  --border-color: rgba(208, 215, 222, 0.8);
+  --text-primary: #24292f;
+  --text-secondary: #57606a;
+}
+
+.theme-preset-vercel.app-light-theme {
+  --bg-color: #ffffff;
+  --surface-color: #ffffff;
+  --surface-elevated: #fafafa;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --text-primary: #000000;
+  --text-secondary: #666666;
+}
+
+.theme-preset-retro.app-light-theme {
+  --bg-color: #f4faf4;
+  --surface-color: #ffffff;
+  --surface-elevated: #e0f0e0;
+  --border-color: #059669;
+  --text-primary: #047857;
+  --text-secondary: #059669;
+}
+
+/* Custom Typography Utilities */
+.family-inter { font-family: var(--font-family-secondary); }
+.family-geist { font-family: var(--font-family-sans); }
+.family-jetbrainsMono { font-family: var(--font-family-mono); }
+.family-spaceGrotesk { font-family: "Space Grotesk", sans-serif; }
+.family-outfit { font-family: "Outfit", sans-serif; }
+.family-satoshi { font-family: var(--font-family-sans); font-weight: 500; letter-spacing: -0.015em; }
+
+/* Dynamic Theme Engine: Corner Cuts */
+.radius-engine-none, .radius-engine-none * { border-radius: 0px !important; }
+.radius-engine-sm, .radius-engine-sm * { border-radius: 4px !important; }
+.radius-engine-md, .radius-engine-md * { border-radius: 8px !important; }
+.radius-engine-lg, .radius-engine-lg * { border-radius: 14px !important; }
+.radius-engine-full, .radius-engine-full * { border-radius: 24px !important; }
+
+/* Dynamic Theme Engine: Elevation Shadows - Pure restraint, 80% glow reduction */
+.shadow-engine-flat { box-shadow: none !important; border-width: 1px !important; }
+.shadow-engine-subtle { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05), 0 1px 3px 0 rgba(0,0,0,0.02) !important; }
+.shadow-engine-elevated { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06) !important; }
+.shadow-engine-glow { box-shadow: 0 0 8px rgba(91, 91, 214, 0.08) !important; border-color: rgba(91, 91, 214, 0.25) !important; }
+.shadow-engine-deep { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3), 0 0 15px rgba(0,0,0,0.1) !important; }
+
+/* Dynamic Theme Engine: Spatial Density Layers */
+.density-engine-compact .density-pad { padding: 6px !important; }
+.density-engine-compact .density-gap { gap: 4px !important; }
+.density-engine-compact .density-text { font-size: 11px !important; }
+
+.density-engine-comfortable .density-pad { padding: 12px !important; }
+.density-engine-comfortable .density-gap { gap: 10px !important; }
+.density-engine-comfortable .density-text { font-size: 13px !important; }
+
+.density-engine-spacious .density-pad { padding: 18px !important; }
+.density-engine-spacious .density-gap { gap: 16px !important; }
+.density-engine-spacious .density-text { font-size: 14px !important; }
+
+/* Font Size Scales */
+.size-scale-compact { font-size: 0.9rem; }
+.size-scale-comfortable { font-size: 1rem; }
+.size-scale-large { font-size: 1.08rem; }
+
+/* Global default margins and transitions */
+* {
+  transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: var(--font-family-sans);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* React Flow premium custom overrides */
+.react-flow__handle {
+  width: 8px !important;
+  height: 8px !important;
+  background-color: var(--primary-accent) !important;
+  border: 1px solid var(--surface-color) !important;
+  border-radius: 9999px !important;
+  z-index: 50 !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  transition: transform 120ms ease, background-color 120ms ease;
+}
+
+.react-flow__handle:hover {
+  transform: scale(1.4) !important;
+  background-color: var(--secondary-accent) !important;
+  box-shadow: 0 0 6px var(--primary-accent) !important;
+}
+
+.react-flow__controls {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+  background: var(--surface-color) !important;
+}
+
+.react-flow__controls-button {
+  background: var(--surface-color) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
+  fill: currentColor !important;
+}
+
+.react-flow__controls-button:hover {
+  background: var(--surface-elevated) !important;
+  color: var(--text-primary) !important;
+}
+
+.react-flow__minimap {
+  background-color: var(--surface-color) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1) !important;
+}
+
+/* Glowing connection lines (extremely reduced glow, high precision) */
+@keyframes flow-dash {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+
+.react-flow__edge-path {
+  stroke-width: 1.5 !important;
+  transition: stroke 150ms ease, stroke-width 150ms ease;
+}
+
+.react-flow__edge.animated path {
+  stroke-dasharray: 4, 4;
+  animation: flow-dash 1s linear infinite;
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: var(--primary-accent) !important;
+  stroke-width: 2 !important;
+}
+
+.react-flow__edge:hover .react-flow__edge-path {
+  stroke: var(--primary-accent) !important;
+  stroke-width: 2 !important;
+}
+
+/* Glassmorphism custom components */
+.glass-panel {
+  background: var(--surface-color);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border-color);
+}
+
+/* Custom Scrollbar for premium dev look */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.app-light-theme ::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.08);
+}
+
+.app-light-theme ::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 23, 42, 0.16);
+}
+
+/* Layout Utilities matching the 8px grid spacing system */
+.grid-spacing-1 { padding: 8px; gap: 8px; }
+.grid-spacing-2 { padding: 16px; gap: 16px; }
+.grid-spacing-3 { padding: 24px; gap: 24px; }
+.grid-spacing-4 { padding: 32px; gap: 32px; }
+
+/* Theme preset canvas glow overrides to avoid heavy gaudy shadows */
+.preset-developer-glow {
+  background-image: radial-gradient(ellipse 50% 50% at 50% -10%, rgba(91, 91, 190, 0.03), transparent);
+}
+.preset-classy-glow {
+  background-image: radial-gradient(ellipse 50% 50% at 50% -10%, rgba(197, 168, 128, 0.04), transparent);
+}
+.preset-glass-glow {
+  background-image: radial-gradient(ellipse 60% 60% at 50% -10%, rgba(139, 92, 246, 0.04), transparent);
+}
+
+/* Hierarchy typography scales */
+.text-h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.025em; line-height: 32px; }
+.text-h2 { font-size: 16px; font-weight: 600; letter-spacing: -0.015em; line-height: 22px; }
+.text-body { font-size: 13px; font-weight: 400; line-height: 18px; }
+.text-meta { font-size: 11px; font-weight: 500; font-family: var(--font-family-mono); line-height: 14px; }
+
+/* Dynamic scanlines for terminal retro preset */
+.retro-scanlines::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 999999;
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+}

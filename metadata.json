@@ -1,0 +1,6 @@
+{
+  "name": "ORCHEVRA",
+  "description": "Build, orchestrate, and automate intelligent workflows with enterprise-grade AI and integrations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

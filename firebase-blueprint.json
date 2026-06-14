@@ -1,0 +1,42 @@
+{
+  "entities": {
+    "user": {
+      "title": "User",
+      "description": "User account registration and synchronization details",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email"]
+    },
+    "pipeline": {
+      "title": "Pipeline",
+      "description": "A saved AI workflow graph containing nodes, edges, name, and meta details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "nodes": { "type": "array" },
+        "edges": { "type": "array" },
+        "ownerId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "nodes", "edges", "ownerId", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "user",
+      "description": "Storage path for individual user master profiles"
+    },
+    "/users/{userId}/pipelines/{pipelineId}": {
+      "schema": "pipeline",
+      "description": "Storage path for saved custom AI workflow design graphs"
+    }
+  }
+}

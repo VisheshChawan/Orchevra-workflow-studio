@@ -1,0 +1,76 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Hardened Reusable Helpers
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+    function incoming() {
+      return request.resource.data;
+    }
+    function existing() {
+      return resource.data;
+    }
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    // User Profile Schema Validator
+    function isValidUser(data) {
+      return data.uid is string && data.uid == request.auth.uid
+          && data.email is string && data.email.size() <= 256
+          && (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 256))
+          && data.keys().hasAll(['uid', 'email'])
+          && data.keys().size() <= 4;
+    }
+
+    // Pipeline Graph Schema Validator
+    function isValidPipeline(data) {
+      return data.id is string && data.id.size() <= 128
+          && data.name is string && data.name.size() > 0 && data.name.size() <= 128
+          && (!('description' in data) || (data.description is string && data.description.size() <= 512))
+          && data.nodes is list && data.nodes.size() <= 200
+          && data.edges is list && data.edges.size() <= 200
+          && data.ownerId is string && data.ownerId == request.auth.uid
+          && data.keys().hasAll(['id', 'name', 'nodes', 'edges', 'ownerId', 'createdAt', 'updatedAt'])
+          && data.keys().size() <= 8;
+    }
+
+    // Route /users/{userId}
+    match /users/{userId} {
+      allow get: if isVerifiedUser() && userId == request.auth.uid;
+      allow create: if isVerifiedUser() && userId == request.auth.uid && isValidUser(incoming()) && incoming().createdAt == request.time;
+      allow update: if isVerifiedUser() && userId == request.auth.uid && isValidUser(incoming()) && incoming().createdAt == existing().createdAt;
+      allow delete: if false;
+
+      // Subcollection /users/{userId}/pipelines/{pipelineId}
+      match /pipelines/{pipelineId} {
+        allow list, get: if isVerifiedUser() && userId == request.auth.uid;
+        
+        allow create: if isVerifiedUser() 
+                      && userId == request.auth.uid 
+                      && isValidId(pipelineId) 
+                      && isValidPipeline(incoming()) 
+                      && incoming().createdAt == request.time
+                      && incoming().updatedAt == request.time;
+                      
+        allow update: if isVerifiedUser() 
+                      && userId == request.auth.uid 
+                      && isValidId(pipelineId) 
+                      && isValidPipeline(incoming()) 
+                      && incoming().createdAt == existing().createdAt
+                      && incoming().updatedAt == request.time;
+                      
+        allow delete: if isVerifiedUser() && userId == request.auth.uid && isValidId(pipelineId);
+      }
+    }
+  }
+}
